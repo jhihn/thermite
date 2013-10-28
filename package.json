@@ -9,7 +9,6 @@
     "express": "3.4.0",
     "jade": "*",
     "stylus": "*",
-    "iced-coffee-script": "~1.6.3-g",
     "coffee-script": "~1.6.3",
     "sqlite3": "~2.1.18",
     "stdio": "~0.1.2",
