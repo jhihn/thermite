@@ -1,0 +1,8 @@
+extends layout
+
+block content
+	h1 Test Client
+
+	form(action="/runquery", method="POST")
+		textarea(name="queryText")
+		button(type="submit") Execute
