@@ -4,11 +4,11 @@ thermite
 start db node:
 
 ```sh
-node dbnode.js 3001 data.db
+node dbnode.js 3001 databases/node1.db
 ```
 
 start master node
 
 ```sh
-node app.js
+node server.js
 ```
