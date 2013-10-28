@@ -1,2 +1,2 @@
 require('iced-coffee-script');
-require('./server.coffee');
+require('./server/server.coffee');
