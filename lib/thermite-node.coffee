@@ -9,10 +9,27 @@ module.exports.start = (port, path) ->
 
 	app.set 'port', port
 
-	app.use(express.bodyParser());
+	app.use express.logger('dev')
+	app.use express.bodyParser()
 
-	app.get '/executeQuery', (req, res) ->
-		db.run(req.body.queryText)
+	app.post '/executeQuery', (req, res) ->
+		console.log '/executeQuery'
+		console.log "Body: #{req.body.queryText}"
+
+		db.all req.body.queryText, (err, rows) ->
+			if err
+				console.log 'Error: ' +  err
+
+				res.json
+					error: err
+			else
+				console.log "Success, #{rows.length} row(s) found."
+				res.json rows
+
+
+	#development only
+	if 'development' == app.get('env')
+		app.use(express.errorHandler());
 
 	http.createServer(app).listen app.get('port'), () ->
 		console.log('Express server (thermite node) listening on port ' + app.get('port'))

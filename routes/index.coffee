@@ -1,22 +1,31 @@
-http = require('http');
-/*
- * GET home page.
- */
+http = require 'http'
 
 exports.index = (req, res) ->
 	res.render 'index'
 
 exports.runQuery = (req, res) ->
+	console.log 'running query...'
+
 	reqOptions =
-		host: 'localhost'
 		port: 3001
 		method: 'POST'
 		path: '/executeQuery'
+		headers:
+			'Content-Type': 'application/json'
 
-	http.request options, (response) ->
+	request = http.request reqOptions, (response) ->
 		data = '';
 		response.on 'data', (chunk) ->
 			data += chunk;
 
 		response.on 'end', () ->
-			res.render 'queryResult', data
+			res.render 'queryResult', data: data
+
+	request.on 'error', (err) ->
+			res.render 'error', error: err
+
+
+	request.write JSON.stringify
+		queryText: req.body.queryText
+
+	request.end()
