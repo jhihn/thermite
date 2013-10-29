@@ -1,6 +1,5 @@
 express = require 'express'
 routes = require './routes'
-user = require './routes/user'
 http = require 'http'
 path = require 'path'
 
@@ -23,9 +22,7 @@ if 'development' == app.get('env')
   app.use express.errorHandler()
 
 #routes
-app.get('/', routes.index);
-app.post('/runQuery', routes.runQuery);
-app.get('/users', user.list);
+routes(app) #setup routes
 
 #start
 http.createServer(app).listen app.get('port'), () ->
