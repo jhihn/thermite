@@ -1,4 +1,8 @@
 Sequelize = require 'sequelize'
+fs = require 'fs'
+
+#TESTING: delete master db each starup
+fs.unlinkSync 'databases/master.db'
 
 sequelize = new Sequelize 'database', 'username', 'password',
 	dialect: 'sqlite'
@@ -19,8 +23,8 @@ DatabaseNode = sequelize.define 'DatabaseNode',
 logErrorsFrom DatabaseNode.sync()
 	.done ->
 		#poulate it with some default records for testing
-		logErrorsFrom DatabaseNode.findOrCreate host: 'localhost', port: 3000, path: '/node1'
-		logErrorsFrom DatabaseNode.findOrCreate host: 'localhost', port: 3000, path: '/node2'
+		logErrorsFrom DatabaseNode.findOrCreate host: 'localhost', port: process.env.PORT || 3000, path: '/node1'
+		logErrorsFrom DatabaseNode.findOrCreate host: 'localhost', port: process.env.PORT || 3000, path: '/node2'
 		#logErrorsFrom DatabaseNode.findOrCreate host: 'localhost', port: 3001, path: ''
 		#logErrorsFrom DatabaseNode.findOrCreate host: 'localhost', port: 3002, path: ''
 
