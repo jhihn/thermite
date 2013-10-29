@@ -3,18 +3,14 @@ express = require 'express'
 http = require 'http'
 database = require './database'
 
-module.exports.start = (port, path) ->
+#use the supplied app host instead of creating your own
+module.exports.startHosted = (nodeId, app, path) ->
 	database.setup(path, true)
 	db = database.database
 
-	app = new express
+	router = new express.Router
 
-	app.set 'port', port
-
-	app.use express.logger('dev')
-	app.use express.bodyParser()
-
-	app.post '/executeQuery', (req, res) ->
+	router.post '/executeQuery', (req, res) ->
 		console.log '/executeQuery'
 		console.log "Body: #{req.body.queryText}"
 
@@ -28,6 +24,17 @@ module.exports.start = (port, path) ->
 				console.log "Success, #{rows.length} row(s) found."
 				res.json rows
 
+	app.use(nodeId, router);
+
+module.exports.start = (port, path) ->
+	app = new express
+
+	app.set 'port', port
+
+	app.use express.logger('dev')
+	app.use express.bodyParser()
+
+	module.exports.startHosted('/node1', app, path)
 
 	#development only
 	if 'development' == app.get('env')

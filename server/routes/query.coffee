@@ -20,7 +20,7 @@ module.exports =
 						host: node.host
 						port: node.port
 						method: 'POST'
-						path: '/executeQuery'
+						path: node.path + '/executeQuery'
 						headers:
 							'Content-Type': 'application/json'
 
