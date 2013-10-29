@@ -1,13 +1,25 @@
 extends layout
 
 block content
+	h1 Query
+	
+	h2 Text
+	pre= queryText
+
+	h2 Reduce Mode
+	p union
+
 	h1 Results
 
 	table.data
+		thead
+			tr
+				each v, k in data[0]
+					th= k
 		tbody
-			for row in data
+			each row in data
 				tr
-					for field in row
+					each field in row
 						td= JSON.stringify(field)
 
 	h2 Raw (JSON)

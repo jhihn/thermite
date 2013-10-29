@@ -1,9 +1,11 @@
 sqlite3 = require 'sqlite3'
 express = require 'express'
 http = require 'http'
+database = require './database'
 
 module.exports.start = (port, path) ->
-	db = new sqlite3.Database(path)
+	database.setup(path, true)
+	db = database.database
 
 	app = new express
 

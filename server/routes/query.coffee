@@ -15,7 +15,7 @@ module.exports =
 
 		db.DatabaseNode.all().success (nodes) ->
 			dbcalls = for node in nodes
-				(done) ->
+				do (node) -> (done) ->
 					reqOptions =
 						host: node.host
 						port: node.port
@@ -30,7 +30,15 @@ module.exports =
 							data += chunk;
 
 						response.on 'end', () ->
-							done null, JSON.parse(data)
+							#convert to js
+							parsedData = JSON.parse(data)
+
+							#add on virtual column so we know which dbnode it came from
+							alteredData = for x in parsedData
+								x['_node'] = "#{node.host}:#{node.port}"
+								x
+
+							done null, alteredData
 
 					request.on 'error', (err) ->
 						done err
@@ -49,4 +57,5 @@ module.exports =
 
 				res.render 'queryResult',
 					title: 'Results'
-					data: _.union results
+					data: _.union.apply null, results
+					queryText: req.body.queryText
