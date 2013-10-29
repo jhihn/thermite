@@ -1,8 +1,19 @@
 extends layout
 
 block content
-	h1 Test Client
+	h1 Thermite?
+
+	h2 Nodes
+	ul
+		for node in nodes
+			li= node.host + ':' + node.port
 
 	form(action="/runquery", method="POST")
-		textarea(name="queryText")
-		button(type="submit") Execute
+		.queryInput
+			textarea(name="queryText",rows=10,cols=100)
+		.queryReduceInput
+			label
+				| Union
+				input(type='radio',name='combine',value='union',checked)
+		.queryButtons
+			button(type="submit") Execute

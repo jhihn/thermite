@@ -1,31 +1,51 @@
 http = require 'http'
+db = require '../database'
+async = require 'async'
+_ = require 'underscore'
 
 exports.index = (req, res) ->
-	res.render 'index'
+	db.DatabaseNode.all().success (nodes) ->
+		res.render 'index',
+			title: 'Welcome'
+			nodes: nodes
 
 exports.runQuery = (req, res) ->
 	console.log 'running query...'
 
-	reqOptions =
-		port: 3001
-		method: 'POST'
-		path: '/executeQuery'
-		headers:
-			'Content-Type': 'application/json'
+	db.DatabaseNode.all().success (nodes) ->
+		dbcalls = for node in nodes
+			(done) ->
+				reqOptions =
+					host: node.host
+					port: node.port
+					method: 'POST'
+					path: '/executeQuery'
+					headers:
+						'Content-Type': 'application/json'
 
-	request = http.request reqOptions, (response) ->
-		data = '';
-		response.on 'data', (chunk) ->
-			data += chunk;
+				request = http.request reqOptions, (response) ->
+					data = '';
+					response.on 'data', (chunk) ->
+						data += chunk;
 
-		response.on 'end', () ->
-			res.render 'queryResult', data: data
+					response.on 'end', () ->
+						done null, JSON.parse(data)
 
-	request.on 'error', (err) ->
-			res.render 'error', error: err
+				request.on 'error', (err) ->
+					done err
 
+				request.write JSON.stringify
+					queryText: req.body.queryText
 
-	request.write JSON.stringify
-		queryText: req.body.queryText
+				request.end()
 
-	request.end()
+		async.parallel dbcalls, (err, results) ->
+			if err
+				res.render 'error',
+					title: 'Error'
+					error: err
+				return
+
+			res.render 'queryResult',
+				title: 'Results'
+				data: _.union results

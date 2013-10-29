@@ -3,4 +3,14 @@ extends layout
 block content
 	h1 Results
 
-	.data= data
+	table.data
+		tbody
+			for row in data
+				tr
+					for field in row
+						td= JSON.stringify(field)
+
+	h2 Raw (JSON)
+
+	pre.data= JSON.stringify(data)
+
