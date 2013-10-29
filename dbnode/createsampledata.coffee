@@ -1,23 +1,24 @@
-db = (require './database').database
 async = require 'async'
 
-rows = 10
+module.exports = (db) ->
 
-createCommands = [
-	(done) -> db.run "DROP TABLE IF EXISTS TestData;", done
-	(done) -> db.run "CREATE TABLE TestData (ColA INTEGER);", done
-	]
+	rows = 10
 
-insertCommands = 
-	for i in [1..rows]
-		(done) ->
-			cola = Math.floor Math.random() * rows
-			db.run "INSERT INTO TestData (ColA) VALUES (#{cola})", done
+	createCommands = [
+		(done) -> db.run "DROP TABLE IF EXISTS TestData;", done
+		(done) -> db.run "CREATE TABLE TestData (ColA INTEGER);", done
+		]
 
-async.series createCommands, (err, results) ->
-	async.series insertCommands, (err, results) ->
-		if err
-			console.log 'Error: ' + err
-			return
+	insertCommands = 
+		for i in [1..rows]
+			(done) ->
+				cola = Math.floor Math.random() * rows * 2
+				db.run "INSERT INTO TestData (ColA) VALUES (#{cola})", done
 
-		console.log 'Test data created.'	
+	async.series createCommands, (err, results) ->
+		async.series insertCommands, (err, results) ->
+			if err
+				console.log 'Error: ' + err
+				return
+
+			console.log 'Test data created.'

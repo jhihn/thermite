@@ -1,1 +1,0 @@
-Just a file so git will create this folder for us.

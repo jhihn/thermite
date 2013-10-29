@@ -35,7 +35,7 @@ module.exports =
 
 							#add on virtual column so we know which dbnode it came from
 							alteredData = for x in parsedData
-								x['_node'] = "#{node.host}:#{node.port}"
+								x['_node'] = "#{node.host}:#{node.port}#{node.path}"
 								x
 
 							done null, alteredData

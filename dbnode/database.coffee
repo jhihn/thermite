@@ -1,9 +1,12 @@
 sqlite3 = require 'sqlite3'
+createSampleData = require './createsampledata'
 
 module.exports = 
 	setup: (path, createTestData) ->
-		module.exports.database = new sqlite3.Database(path)
+		db = new sqlite3.Database(path)
+		module.exports.database = db
 		
 		if createTestData
-			require './createsampledata'
+			createSampleData db
+			
 		

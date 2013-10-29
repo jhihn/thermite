@@ -4,13 +4,17 @@ http = require 'http'
 database = require './database'
 
 #use the supplied app host instead of creating your own
-module.exports.startHosted = (nodeId, app, path) ->
+getMiddleware = (path) ->
+
 	database.setup(path, true)
 	db = database.database
 
-	router = new express.Router
+	app = new express
 
-	router.post '/executeQuery', (req, res) ->
+	app.get '/', (req, res) ->
+		res.end("dbnode running.")
+
+	app.post '/executeQuery', (req, res) ->
 		console.log '/executeQuery'
 		console.log "Body: #{req.body.queryText}"
 
@@ -24,9 +28,9 @@ module.exports.startHosted = (nodeId, app, path) ->
 				console.log "Success, #{rows.length} row(s) found."
 				res.json rows
 
-	app.use(nodeId, router);
+	return app
 
-module.exports.start = (port, path) ->
+startServer = (port, path) ->
 	app = new express
 
 	app.set 'port', port
@@ -34,7 +38,7 @@ module.exports.start = (port, path) ->
 	app.use express.logger('dev')
 	app.use express.bodyParser()
 
-	module.exports.startHosted('/node1', app, path)
+	app.use getMiddleware path
 
 	#development only
 	if 'development' == app.get('env')
@@ -42,3 +46,6 @@ module.exports.start = (port, path) ->
 
 	http.createServer(app).listen app.get('port'), () ->
 		console.log('Express server (thermite node) listening on port ' + app.get('port'))
+
+module.exports.getMiddleware = getMiddleware
+module.exports.start = startServer
