@@ -2,7 +2,8 @@ Sequelize = require 'sequelize'
 fs = require 'fs'
 
 #TESTING: delete master db each starup
-fs.unlinkSync 'databases/master.db'
+if fs.existsSync 'databases/master.db'
+	fs.unlinkSync 'databases/master.db'
 
 sequelize = new Sequelize 'database', 'username', 'password',
 	dialect: 'sqlite'

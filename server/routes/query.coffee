@@ -2,6 +2,7 @@ http = require 'http'
 db = require '../database'
 async = require 'async'
 _ = require 'underscore'
+core = require '../core' #thermite core
 
 module.exports =
 	index: (req, res) ->
@@ -10,52 +11,19 @@ module.exports =
 				title: 'Welcome'
 				nodes: nodes
 
-	runQuery: (req, res) ->
-		console.log 'running query...'
+	runQuery: (req, res, next) ->
+		#get all nodes from master database
+		db.DatabaseNode.all()
+			.error (err) ->
+				next err
+			.success (nodes) ->
+				core.runQuery nodes, req.body.queryText, (err, results) ->
+					if err
+						next err
+						return
 
-		db.DatabaseNode.all().success (nodes) ->
-			dbcalls = for node in nodes
-				do (node) -> (done) ->
-					reqOptions =
-						host: node.host
-						port: node.port
-						method: 'POST'
-						path: node.path + '/executeQuery'
-						headers:
-							'Content-Type': 'application/json'
-
-					request = http.request reqOptions, (response) ->
-						data = '';
-						response.on 'data', (chunk) ->
-							data += chunk;
-
-						response.on 'end', () ->
-							#convert to js
-							parsedData = JSON.parse(data)
-
-							#add on virtual column so we know which dbnode it came from
-							alteredData = for x in parsedData
-								x['_node'] = "#{node.host}:#{node.port}#{node.path}"
-								x
-
-							done null, alteredData
-
-					request.on 'error', (err) ->
-						done err
-
-					request.write JSON.stringify
+					#show html page with results
+					res.render 'queryResult',
+						title: 'Results'
+						data: results
 						queryText: req.body.queryText
-
-					request.end()
-
-			async.parallel dbcalls, (err, results) ->
-				if err
-					res.render 'error',
-						title: 'Error'
-						error: err
-					return
-
-				res.render 'queryResult',
-					title: 'Results'
-					data: _.union.apply null, results
-					queryText: req.body.queryText
