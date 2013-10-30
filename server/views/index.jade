@@ -12,8 +12,13 @@ block content
 		.queryInput
 			textarea(name="queryText",rows=10,cols=100) SELECT * FROM TestData
 		.queryReduceInput
-			label
-				| Union
-				input(type='radio',name='combine',value='union',checked)
+			for reduceName in reduceNames
+				label
+					span= reduceName
+					input(type='radio',name='reduceName',value=reduceName)
 		.queryButtons
 			button(type="submit") Execute
+
+	:coffeescript
+		$ () ->
+			$('.queryReduceInput input[type=radio]').first().prop('checked', true)

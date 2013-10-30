@@ -2,6 +2,7 @@ db = require './database'
 async = require 'async'
 _ = require 'underscore'
 http = require 'http'
+reduceOperations = require './reduceOperations'
 
 #core module
 
@@ -10,7 +11,7 @@ http = require 'http'
 # nodes: an array of node objects representing the nodes to query, with host, port, path
 # query: sqlite query
 # cb: callback to call when we are done, or have encountered an error
-exports.runQuery = (nodes, query, cb) ->
+exports.runQuery = (nodes, query, reduceOperation, cb) ->
 
 	console.log 'running query...'
 
@@ -53,6 +54,7 @@ exports.runQuery = (nodes, query, cb) ->
 			cb err #sorry, pal.
 
 		#success, reduce results and return them
-		reducedResults = _.union.apply null, results #placeholder for more reduces
-
-		cb null, reducedResults
+		#lookup operation
+		reduce = reduceOperations[reduceOperation]
+		reduce results, (err, newResults) ->
+			cb err, newResults
