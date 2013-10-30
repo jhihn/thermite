@@ -6,7 +6,7 @@ block content
 	h2 Nodes
 	ul
 		for node in nodes
-			li= node.host + ':' + node.port
+			li= node.host + ':' + node.port + node.path
 
 	form(action="/runquery", method="POST")
 		.queryInput

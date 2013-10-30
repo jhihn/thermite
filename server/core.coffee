@@ -3,6 +3,7 @@ async = require 'async'
 _ = require 'underscore'
 http = require 'http'
 reduceOperations = require './reduceOperations'
+ResultsMerger = require './resultsMerger'
 
 #core module
 
@@ -14,6 +15,9 @@ reduceOperations = require './reduceOperations'
 exports.runQuery = (nodes, query, reduceOperation, cb) ->
 
 	console.log 'running query...'
+
+	merger = new ResultsMerger
+		queryText: query
 
 	dbcalls = for node in nodes
 		do (node) -> (done) ->
@@ -34,6 +38,8 @@ exports.runQuery = (nodes, query, reduceOperation, cb) ->
 					#convert to js
 					parsedData = JSON.parse(data)
 
+					merger.receiveChunk(node, parsedData);
+
 					#add on virtual column so we know which dbnode it came from
 					alteredData = for x in parsedData
 						x['_node'] = "#{node.host}:#{node.port}#{node.path}"
@@ -53,8 +59,6 @@ exports.runQuery = (nodes, query, reduceOperation, cb) ->
 		if err
 			cb err #sorry, pal.
 
-		#success, reduce results and return them
-		#lookup operation
-		reduce = reduceOperations[reduceOperation]
-		reduce results, (err, newResults) ->
-			cb err, newResults
+		results = merger.complete() #tell the merger we are done and get results
+		
+		cb null, results
