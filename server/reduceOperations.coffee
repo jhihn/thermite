@@ -34,9 +34,10 @@ reduceOperations =
 		callback null, reducedResults
 
 	"count all": (nodeResults, callback) ->
-		reduceFunction = (memo, v) -> memo + v.length
+		count = 0
 
-		count = _.reduce nodeResults, reduceFunction, 0
+		for nodeResult in nodeResults
+			count += nodeResult.length
 
 		callback null, [ count: count ]
 
