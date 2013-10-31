@@ -22,7 +22,7 @@ module.exports =
 			.error (err) ->
 				next err
 			.success (nodes) ->
-				core.runQuery nodes, req.body.queryText, req.body.reduceName, (err, results) ->
+				core.runQuery nodes, req.body.queryText, req.body.script, req.body.reduceName, (err, results) ->
 					if err
 						next err
 						return
