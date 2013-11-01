@@ -14,5 +14,5 @@ results
 npm-debug.log
 node_modules
 
-databases/*.db
-databases/*.sqlite
+var/*.db
+var/*.sqlite
