@@ -6,14 +6,26 @@ ResultsMerger = require './resultsMerger'
 QueryBuilder = require './queryBuilder'
 sqlparser = require './sqlparser'
 
-#core module
+#hard-coded node list (for now)
+nodes = [
+	{
+		host: 'localhost'
+		port: process.env.PORT || 3000
+		path: '/node1'
+	},
+	{
+		host: 'localhost'
+		port: process.env.PORT || 3000
+		path: '/node2'
+	}
+]
 
 #runQuery
 #params
 # nodes: an array of node objects representing the nodes to query, with host, port, path
 # query: sqlite query
 # cb: callback to call when we are done, or have encountered an error
-exports.runQuery = (nodes, query, script, cb) ->
+exports.runQuery = (query, script, cb) ->
 
 	console.log 'running query...'
 

@@ -2,7 +2,7 @@ extends layout
 
 block content
 	h2 SQL Query:
-	pre.sql= queryText
+	pre.sql= query
 
 	h3 Results:
 
@@ -16,11 +16,3 @@ block content
 				tr
 					each field in row
 						td= JSON.stringify(field)
-
-	h3 Parsed
-	pre= JSON.stringify(parsed)
-
-	:coffeescript
-		$ ->
-
-

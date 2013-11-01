@@ -1,5 +1,4 @@
 http = require 'http'
-db = require '../lib/database'
 async = require 'async'
 _ = require 'underscore'
 core = require '../lib/core' #thermite core
@@ -7,27 +6,20 @@ sqlparser = require '../lib/sqlparser'
 
 module.exports =
 	index: (req, res) ->
-		db.DatabaseNode.all().success (nodes) ->
-			res.render 'index',
-				title: 'Welcome'
-				nodes: nodes
+		res.render 'index',
+			title: 'Welcome'
 
 	runQuery: (req, res, next) ->
-		#get all nodes from master database
-		db.DatabaseNode.all()
-			.error (err) ->
+		core.runQuery req.body.query, req.body.script, (err, results) ->
+			if err
 				next err
-			.success (nodes) ->
-				core.runQuery nodes, req.body.query, req.body.script, (err, results) ->
-					if err
-						next err
-						return
+				return
 
-					#show html page with results
-					res.render 'queryResult',
-						title: 'Results'
-						data: results
-						queryText: req.body.query
+			#show html page with results
+			res.render 'queryResult',
+				title: 'Results'
+				data: results
+				query: req.body.query
 
 	parseStatement: (req, res) ->
 		res.json sqlparser.parse req.body.query
