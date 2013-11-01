@@ -1,9 +1,9 @@
 http = require 'http'
-db = require '../database'
+db = require '../lib/database'
 async = require 'async'
 _ = require 'underscore'
-core = require '../core' #thermite core
-reduceOperations = require '../reduceOperations'
+core = require '../lib/core' #thermite core
+reduceOperations = require '../lib/reduceOperations'
 
 module.exports =
 	index: (req, res) ->

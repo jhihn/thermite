@@ -2,12 +2,12 @@ Sequelize = require 'sequelize'
 fs = require 'fs'
 
 #TESTING: delete master db each starup
-if fs.existsSync 'databases/master.db'
-	fs.unlinkSync 'databases/master.db'
+if fs.existsSync 'var/master.db'
+	fs.unlinkSync 'var/master.db'
 
 sequelize = new Sequelize 'database', 'username', 'password',
 	dialect: 'sqlite'
-	storage: 'databases/master.db'
+	storage: 'var/master.db'
 
 logErrorsFrom = (x) ->
 	x.error (err) ->
