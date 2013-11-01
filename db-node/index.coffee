@@ -25,6 +25,14 @@ getMiddleware = (path) ->
 				res.json
 					error: err
 			else
+				if req.body.script
+					func = new Function('data', req.body.script)
+					newRows = func(rows)
+
+					#only replace "rows" with "newRows" if new rows is defined and not null
+					if newRows
+						rows = newRows
+
 				console.log "Success, #{rows.length} row(s) found."
 				res.json rows
 

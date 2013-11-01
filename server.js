@@ -1,2 +1,2 @@
 require('coffee-script');
-require('./server/server.coffee');
+require('./master-node/startup.coffee');

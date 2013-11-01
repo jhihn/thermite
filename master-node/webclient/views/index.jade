@@ -16,6 +16,8 @@ block content
 				label
 					span= reduceName
 					input(type='radio',name='reduceName',value=reduceName)
+
+		textarea(name='script',rows=10,cols=100) data.forEach( function(row) { row.LastName = row.LastName.toUpperCase(); });
 		.queryButtons
 			button(type="submit") Execute
 

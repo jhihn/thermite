@@ -12,7 +12,7 @@ ResultsMerger = require './resultsMerger'
 # nodes: an array of node objects representing the nodes to query, with host, port, path
 # query: sqlite query
 # cb: callback to call when we are done, or have encountered an error
-exports.runQuery = (nodes, query, reduceOperation, cb) ->
+exports.runQuery = (nodes, query, script, reduceOperation, cb) ->
 
 	console.log 'running query...'
 
@@ -52,6 +52,7 @@ exports.runQuery = (nodes, query, reduceOperation, cb) ->
 
 			request.write JSON.stringify
 				queryText: query
+				script: script
 
 			request.end()
 

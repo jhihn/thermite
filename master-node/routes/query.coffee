@@ -1,9 +1,9 @@
 http = require 'http'
-db = require '../database'
+db = require '../lib/database'
 async = require 'async'
 _ = require 'underscore'
-core = require '../core' #thermite core
-reduceOperations = require '../reduceOperations'
+core = require '../lib/core' #thermite core
+reduceOperations = require '../lib/reduceOperations'
 
 module.exports =
 	index: (req, res) ->
@@ -22,7 +22,7 @@ module.exports =
 			.error (err) ->
 				next err
 			.success (nodes) ->
-				core.runQuery nodes, req.body.queryText, req.body.reduceName, (err, results) ->
+				core.runQuery nodes, req.body.queryText, req.body.script, req.body.reduceName, (err, results) ->
 					if err
 						next err
 						return
