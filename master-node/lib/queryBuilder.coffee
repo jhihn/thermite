@@ -16,7 +16,6 @@ class QueryBuilder
 	buildQuery:(parsedQuery, master=False)->
 		sql = 'SELECT '
 		selColumns = []
-		console.log(-1)
 		for f in parsedQuery.fields
 			alias = ' '
 			nameOrFunc = ''
@@ -27,26 +26,19 @@ class QueryBuilder
 				f.field.value 
 			aliasCount = 0
 			if nameOrFunc.toUpperCase() == 'AVG'
-				console.log('a')
 				if master	
-					console.log('a1')				
 					selColumns.push( 'SUM(_A' + aliasCount + ')/COUNT(_A' + (aliasCount + 1) + ')' )
-					console.log('a11')
 				else
-					console.log('a2')
 					selColumns.push( 'SUM(' + f.field.arguments[0].value + ') as _A' + aliasCount + ', COUNT(' + f.field.arguments[0].value + ') as _A' + (aliasCount + 1) )
-					console.log('a22')
 				aliasCount += 2
-				console.log('b2')
-			else if ['MIN', 'MAX', 'SUM', 'COUNT', 'TOTAL'].indexOf(nameOrFunc.toUpperCase()) != 0
-				console.log('c')
+			else if ['MIN', 'MAX', 'SUM', 'COUNT', 'TOTAL'].indexOf(nameOrFunc.toUpperCase()) != -1
 				selColumns.push(nameOrFunc + '(' + f.field.name.value + ')' + alias)
+
 			else
-				console.log('d')
 				selColumns.push(nameOrFunc + alias)
 		
 			sql += selColumns.join(', ')
-		
+
 		if parsedQuery.source 
 			sql += 'FROM ' + parsedQuery.source.name.value 
 		
@@ -61,7 +53,6 @@ class QueryBuilder
 			groupFields = 
 				for f in parsedQuery.group.fields
 					f.value 
-		console.log('aa')					
 		sql += groupFields.join(', ')
 		
 		if parsedQuery.order
@@ -69,8 +60,7 @@ class QueryBuilder
 			orderFields = 
 				for f in parsedQuery.order.orderings
 					f.value.value + ' ' + f.direction
-		console.log('bb')
-		sql += ', '.join(orderFields)
+		sql += orderFields.join(', ')
 		
 		#if parsedQuery.limit != null
 		#	sql += 'LIMIT '
