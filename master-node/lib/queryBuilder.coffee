@@ -20,10 +20,10 @@ class QueryBuilder
 			alias = ' '
 			nameOrFunc = ''
 			if f.name
-				alias += 'as ' + f.name.value 
+				alias += 'as ' + f.name.value
 				nameOrFunc = f.field.name 
 			else 
-				f.field.value 
+				nameOrFunc = f.field.value 
 			aliasCount = 0
 			if nameOrFunc.toUpperCase() == 'AVG'
 				if master	
@@ -33,11 +33,11 @@ class QueryBuilder
 				aliasCount += 2
 			else if ['MIN', 'MAX', 'SUM', 'COUNT', 'TOTAL'].indexOf(nameOrFunc.toUpperCase()) != -1
 				selColumns.push(nameOrFunc + '(' + f.field.name.value + ')' + alias)
-
 			else
 				selColumns.push(nameOrFunc + alias)
 		
-			sql += selColumns.join(', ')
+		console.log JSON.stringify selColumns
+		sql += selColumns.join(', ')
 
 		if parsedQuery.source 
 			sql += 'FROM ' + parsedQuery.source.name.value 
