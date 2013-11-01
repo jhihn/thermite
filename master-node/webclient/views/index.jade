@@ -10,9 +10,11 @@ block content
 
 		textarea(id='queryTextArea', name='query', style='display: none;')
 
+		h3 Parsed SQL
+		div#parsedEditor(style='min-height: 200px;')
+
 		h3 Script:
 		div#scriptEditor(style='min-height: 200px;')
-			| data.forEach( function(row) { row.LastName = row.LastName.toUpperCase(); });
 
 		textarea(id='scriptTextArea', name='script', style='display: none')
 
@@ -20,21 +22,40 @@ block content
 			button(type="submit") Execute
 
 	script(src='scripts/ace-editor/ace.js')
+	script(src='scripts/underscore/underscore-min.js')
 
 	:coffeescript
-		setupEditor = (name, mode) ->
+		setupEditor = (name, mode, useTextArea = true) ->
 			editor = ace.edit "#{name}Editor"
 
 			editor.setTheme 'ace/theme/monokai'
 			editor.getSession().setMode(mode)
 
-			textArea = $ "##{name}TextArea"
+			if useTextArea
+				textArea = $ "##{name}TextArea"
 
-			textArea.val(editor.getSession().getValue());
-
-			editor.getSession().on 'change', ->
 				textArea.val(editor.getSession().getValue());
 
+				editor.getSession().on 'change', ->
+					textArea.val(editor.getSession().getValue());
+
+			editor
+
 		$ ->
-			setupEditor 'query', 'ace/mode/sql'
+			queryEditor = setupEditor 'query', 'ace/mode/sql'
 			setupEditor 'script', 'ace/mode/javascript'
+			parsedEditor = setupEditor 'parsed', 'ace/mode/javascript'
+			parsedEditor.setReadOnly(true)
+
+			console.log queryEditor.getValue()
+
+			getParsedData = () ->
+				onSuccess = (data) ->
+					parsedEditor.setValue(JSON.stringify(data, null, '    '))
+				$.post '/parsestatement', query: queryEditor.getValue(), onSuccess
+
+			getParsedData() # do it once to start, in cse there is somethign in the editor already
+
+			#auto-parse
+			queryEditor.getSession().on 'change', _.debounce getParsedData, 300
+					

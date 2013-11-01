@@ -3,6 +3,7 @@ db = require '../lib/database'
 async = require 'async'
 _ = require 'underscore'
 core = require '../lib/core' #thermite core
+sqlparser = require '../lib/sqlparser'
 
 module.exports =
 	index: (req, res) ->
@@ -27,3 +28,6 @@ module.exports =
 						title: 'Results'
 						data: results
 						queryText: req.body.query
+
+	parseStatement: (req, res) ->
+		res.json sqlparser.parse req.body.query
