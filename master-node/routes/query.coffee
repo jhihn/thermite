@@ -15,10 +15,12 @@ module.exports =
 				next err
 				return
 
+			console.log JSON.stringify results
+
 			#show html page with results
 			res.render 'queryResult',
 				title: 'Results'
-				data: results.results
+				data: results.data
 				query: results.query
 
 	parseStatement: (req, res) ->
