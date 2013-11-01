@@ -18,8 +18,8 @@ module.exports =
 			#show html page with results
 			res.render 'queryResult',
 				title: 'Results'
-				data: results
-				query: req.body.query
+				data: results.results
+				query: results.query
 
 	parseStatement: (req, res) ->
 		res.json sqlparser.parse req.body.query

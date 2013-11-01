@@ -82,4 +82,6 @@ exports.runQuery = (query, script, cb) ->
 
 		results = merger.complete() #tell the merger we are done and get results
 		
-		cb null, results
+		cb null,
+			data: results
+			query: nodeQuery
