@@ -16,9 +16,9 @@ getMiddleware = (path) ->
 
 	app.post '/executeQuery', (req, res) ->
 		console.log '/executeQuery'
-		console.log "Body: #{req.body.queryText}"
+		console.log "Body: #{req.body.query}"
 
-		db.all req.body.queryText, (err, rows) ->
+		db.all req.body.query, (err, rows) ->
 			if err
 				console.log 'Error: ' +  err
 

@@ -3,6 +3,8 @@ async = require 'async'
 _ = require 'underscore'
 http = require 'http'
 ResultsMerger = require './resultsMerger'
+QueryBuilder = require './queryBuilder'
+sqlparser = require './sqlparser'
 
 #core module
 
@@ -17,6 +19,13 @@ exports.runQuery = (nodes, query, script, cb) ->
 
 	merger = new ResultsMerger
 		queryText: query
+
+	#extract query data from sql
+	queryData = sqlparser.parse(query)
+
+	queryBuilder = new QueryBuilder(query, queryData)
+
+	nodeQuery = queryBuilder.buildDataNodeQuery()
 
 	dbcalls = for node in nodes
 		do (node) -> (done) ->
@@ -50,7 +59,7 @@ exports.runQuery = (nodes, query, script, cb) ->
 				done err
 
 			request.write JSON.stringify
-				queryText: query
+				query: nodeQuery
 				script: script
 
 			request.end()
