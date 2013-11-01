@@ -19,8 +19,8 @@ Project Organization
 
 * `/db-node` - all files for the database node
 * `/master-node` - all files for the master node
-** `/master-node/lib` - the meat and potatoes. all the logic is here.
-** `/master-node/webclient` - all files handed to a web browser (after processing). html, css, images, etc.
-** `/master-node/routes` - maps urls to functions
-** `/master-node/startup.coffee` - starts up the master node, starts a web server, call other moduels to start
+    * `/master-node/lib` - the meat and potatoes. all the logic is here.
+    * `/master-node/webclient` - all files handed to a web browser (after processing). html, css, images, etc.
+    * `/master-node/routes` - maps urls to functions
+    * `/master-node/startup.coffee` - starts up the master node, starts a web server, call other moduels to start
 * `server.js` - entry point for the master node, just calls `master-node/startup.coffee`
