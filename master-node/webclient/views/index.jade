@@ -6,7 +6,7 @@ block content
 		
 		h3 SQL Script:
 		div#queryEditor(style='min-height: 200px;')
-			| SELECT * FROM TestData
+			| SELECT AVG(Age) AS AverageAge, ZipCode FROM TestData GROUP BY ZipCode ORDER BY ZipCode
 
 		textarea(id='queryTextArea', name='query', style='display: none;')
 
