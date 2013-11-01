@@ -1,8 +1,11 @@
 !!!5
 html
-  head
-    title= 'thermite: ' + title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    script(src='/scripts/jquery-2.0.3.min.js')
-  body
-    block content
+	head
+		title= 'thermite: ' + title
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		script(src='/scripts/jquery-2.0.3.min.js')
+	body
+		.header
+			h1 thermite
+		.main
+			block content

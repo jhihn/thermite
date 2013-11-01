@@ -3,18 +3,13 @@ db = require '../lib/database'
 async = require 'async'
 _ = require 'underscore'
 core = require '../lib/core' #thermite core
-reduceOperations = require '../lib/reduceOperations'
 
 module.exports =
 	index: (req, res) ->
-		#get the names of off the opreations
-		reduceNames = _.keys reduceOperations
-
 		db.DatabaseNode.all().success (nodes) ->
 			res.render 'index',
 				title: 'Welcome'
 				nodes: nodes
-				reduceNames: reduceNames
 
 	runQuery: (req, res, next) ->
 		#get all nodes from master database
@@ -22,7 +17,7 @@ module.exports =
 			.error (err) ->
 				next err
 			.success (nodes) ->
-				core.runQuery nodes, req.body.queryText, req.body.script, req.body.reduceName, (err, results) ->
+				core.runQuery nodes, req.body.query, req.body.script, (err, results) ->
 					if err
 						next err
 						return
@@ -31,4 +26,4 @@ module.exports =
 					res.render 'queryResult',
 						title: 'Results'
 						data: results
-						queryText: req.body.queryText
+						queryText: req.body.query

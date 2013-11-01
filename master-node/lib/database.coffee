@@ -1,3 +1,6 @@
+# local master database. This is used for keeping config info or data about nodes, etc.
+# NOT meant to store query results.
+
 Sequelize = require 'sequelize'
 fs = require 'fs'
 
