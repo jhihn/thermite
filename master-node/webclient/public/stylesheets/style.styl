@@ -1,5 +1,50 @@
+baseFont = Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif
+accentFont = Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif
+bgColor = #272822
+
+corner-radial-gradient(innerColor, outerColor)
+	background-repeat
+	background: -moz-radial-gradient(0px 0px, circle farthest-corner,  innerColor 0%, outerColor 100%); /* FF3.6+ */
+	background: -webkit-radial-gradient(0px 0px, circle farthest-corner,  innerColor 0%,outerColor 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-radial-gradient(0px 0px, circle 200px,  innerColor 0%,outerColor 100%); /* Opera 12+ */
+	background: -ms-radial-gradient(0px 0px, circle farthest-corner,  innerColor 0%,outerColor 100%); /* IE10+ */
+	background: radial-gradient(circle farthest-corner at 0px 0px,  innerColor 0%,outerColor 100%); /* W3C */
+
+html
+	height 100%
 body
+	height 100%
+	background-repeat no-repeat
+
 	padding: 50px
-	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
+	font: 14px baseFont
+	background-color bgColor
+	
+	corner-radial-gradient(lighten(bgColor, 10%), bgColor)
+	padding 0
+	margin 0
+
+	color: #ddd
+
+.header
+	background-color rgba(0, 0, 0, 0.2)
+
+.main
+	padding 1em;
+	
+	
+
 a
 	color: #00B7FF
+
+h1, h2, h3, h4
+	margin 0
+	font-family accentFont
+
+table.data
+	background-color darken(bgColor, 10%)
+	width 100%
+
+	thead
+		background-color darken(bgColor, 20%)
+		color #E6DB74

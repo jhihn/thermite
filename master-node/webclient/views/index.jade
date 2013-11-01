@@ -1,26 +1,40 @@
 extends layout
 
 block content
-	h1 Thermite?
-
-	h2 Nodes
-	ul
-		for node in nodes
-			li= node.host + ':' + node.port + node.path
 
 	form(action="/runquery", method="POST")
-		.queryInput
-			textarea(name="queryText",rows=10,cols=100) SELECT * FROM TestData
-		.queryReduceInput
-			for reduceName in reduceNames
-				label
-					span= reduceName
-					input(type='radio',name='reduceName',value=reduceName)
+		
+		h3 SQL Script:
+		div#queryEditor(style='min-height: 200px;')
+			| SELECT * FROM TestData
 
-		textarea(name='script',rows=10,cols=100) data.forEach( function(row) { row.LastName = row.LastName.toUpperCase(); });
+		textarea(id='queryTextArea', name='query', style='display: none;')
+
+		h3 Script:
+		div#scriptEditor(style='min-height: 200px;')
+			| data.forEach( function(row) { row.LastName = row.LastName.toUpperCase(); });
+
+		textarea(id='scriptTextArea', name='script', style='display: none')
+
 		.queryButtons
 			button(type="submit") Execute
 
+	script(src='scripts/ace-editor/ace.js')
+
 	:coffeescript
-		$ () ->
-			$('.queryReduceInput input[type=radio]').first().prop('checked', true)
+		setupEditor = (name, mode) ->
+			editor = ace.edit "#{name}Editor"
+
+			editor.setTheme 'ace/theme/monokai'
+			editor.getSession().setMode(mode)
+
+			textArea = $ "##{name}TextArea"
+
+			textArea.val(editor.getSession().getValue());
+
+			editor.getSession().on 'change', ->
+				textArea.val(editor.getSession().getValue());
+
+		$ ->
+			setupEditor 'query', 'ace/mode/sql'
+			setupEditor 'script', 'ace/mode/javascript'

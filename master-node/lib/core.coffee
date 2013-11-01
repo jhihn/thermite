@@ -2,7 +2,6 @@ db = require './database'
 async = require 'async'
 _ = require 'underscore'
 http = require 'http'
-reduceOperations = require './reduceOperations'
 ResultsMerger = require './resultsMerger'
 
 #core module
@@ -12,7 +11,7 @@ ResultsMerger = require './resultsMerger'
 # nodes: an array of node objects representing the nodes to query, with host, port, path
 # query: sqlite query
 # cb: callback to call when we are done, or have encountered an error
-exports.runQuery = (nodes, query, script, reduceOperation, cb) ->
+exports.runQuery = (nodes, query, script, cb) ->
 
 	console.log 'running query...'
 
