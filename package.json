@@ -15,5 +15,9 @@
     "async": "~0.2.9",
     "underscore": "~1.5.2",
     "sql-parser": "~0.4.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-coffee": "~0.7.0"
   }
 }

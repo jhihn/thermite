@@ -2,13 +2,13 @@ express = require 'express'
 routes = require './routes'
 http = require 'http'
 path = require 'path'
-db = require './lib/database'
+db = require './database'
 
 app = new express
 
 #all environments
 app.set 'port', process.env.PORT || 3000
-app.set 'views', __dirname + '/webclient/views'
+app.set 'views', path.join __dirname, '../webclient/views'
 app.set 'view engine', 'jade'
 app.use express.favicon()
 app.use express.logger('dev')
@@ -17,13 +17,13 @@ app.use express.methodOverride()
 app.use app.router
 
 #temporay, start 2 internal nodes
-dbnode = require '../db-node/index'
+dbnode = require '../../db-node/index'
 app.use '/node1', dbnode.getMiddleware 'var/node1.db'
 app.use '/node2', dbnode.getMiddleware 'var/node2.db'
 
-app.use require('stylus').middleware(__dirname + '/webclient/public')
-app.use express.static path.join __dirname, 'webclient/public'
-app.use '/scripts/underscore', express.static path.join __dirname, '../node_modules/underscore'
+app.use require('stylus').middleware(__dirname + '../webclient/public')
+app.use express.static path.join __dirname, '../webclient/public'
+app.use '/scripts/underscore', express.static path.join __dirname, '../../node_modules/underscore'
 
 #development only
 if 'development' == app.get('env')

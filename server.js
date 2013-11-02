@@ -1,2 +1,2 @@
 require('coffee-script');
-require('./master-node/startup.coffee');
+require('./master-node/lib/startup');
