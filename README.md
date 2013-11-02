@@ -24,3 +24,9 @@ Project Organization
     * `/master-node/routes` - maps urls to functions
     * `/master-node/startup.coffee` - starts up the master node, starts a web server, call other moduels to start
 * `server.js` - entry point for the master node, just calls `master-node/startup.coffee`
+
+Dependencies
+* [async] (https://npmjs.org/package/async): Helps get out of callback-nesting hell
+    * [Documentation](https://github.com/caolan/async/blob/master/README.md)
+* [underscore](https://npmjs.org/package/underscore): functional programming utilities for java arrays, objects, etc
+    * [Documentation](http://underscorejs.org/)
