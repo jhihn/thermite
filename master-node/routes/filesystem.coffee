@@ -26,7 +26,7 @@ module.exports =
 			shasum.update d
 			buffer += d
 
-			if !headerDone
+			if not headerDone
 				x = buffer.indexOf('\n')
 				if (x > 0)
 					offset = x + 1
@@ -57,7 +57,7 @@ module.exports =
 
 		s.on 'end', () ->
 			colDefs = []
-			for i in outColNames.length
+			for i in [0..outColNames.length]
 				colDefs.push outColNames[i] + ' ' + outColTypes[i]
 			createStatement += colDefs.join(' TEXT,') + ")"
 			db.FileTable.create({
@@ -67,21 +67,21 @@ module.exports =
 				sha1: shasum.digest('hex')
 				schema: createStatement
 			})		
-			for i in blocks.count -1
-				db.FileTableBlocks.create({
+			for i in [0..blocks.count - 1]
+				db.FileTableBlocks.create
 					sha1: shasum.digest('hex')
 					blockId: i
 					start: offsets[i] 
-					end: offsets[i + 1] -1
-				})		
+					end: offsets[i + 1] - 1
+			
 				
-			db.FileTableBlocks.create({
+			db.FileTableBlocks.create
 				sha1: shasum.digest('hex')
 				blockId: blocks.count - 1
-				start: offsets[-1] 
+				start: offsets[offsets.length - 1] 
 				end:  req.files.file.size
-			})		
-				
+			
+
 ###
 {
   displayImage: {

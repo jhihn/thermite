@@ -10,7 +10,7 @@ module.exports =
 		guid: dbtypes.STRING   
 		beat: dbtypes.INTEGER  # last heartbeat time_t
 
-	DatabaseNodeGroup
+	DatabaseNodeGroup: db.define 'DatabaseNodeGroup',
 		name: dbtypes.STRING # name of group (ie. 'secret', 'open', 'jeff') for file block allocation
 		guid: dbtypes.STRING # guid of node
 
