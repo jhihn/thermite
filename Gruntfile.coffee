@@ -1,5 +1,6 @@
 module.exports = (grunt) ->
 	grunt.initConfig
+
 		coffee:
 			build:
 				options:
@@ -13,6 +14,5 @@ module.exports = (grunt) ->
 
 	grunt.loadNpmTasks "grunt-contrib-coffee"
 
-	grunt.registerTask 'default', 'Try Logging', ->
-		grunt.log.write('Running the default task')
+	grunt.registerTask('default', ['coffee'])
 
