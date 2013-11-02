@@ -2,7 +2,7 @@ express = require 'express'
 routes = require './routes'
 http = require 'http'
 path = require 'path'
-db = require './lib/database'
+db = require './database'
 
 app = new express
 
