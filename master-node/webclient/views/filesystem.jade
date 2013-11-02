@@ -1,10 +1,10 @@
 extends layout
 
 block content
-
-	form(action="/upload", method="POST")
+ 
+	form(action="/upload", method="POST", enctype="multipart/form-data")
 		input(type='text', id='keys' value='col1,col2...') 
 		.queryButtons
-			input(type='file', id='filename')
+			input(type='file', id='file')
 			input(type='submit', value='Upload')
 

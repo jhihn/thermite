@@ -9,6 +9,7 @@ module.exports =
 			title: 'Welcome'
 	upload: (req, res) ->
 		#TODO: get this as chunks come in to the server and not after file upload is complete.
+		console.log JSON.stringify req.files
 		createStatement = 'CREATE TABLE ' + req.files.file.name + ' (' 
 		shasum = crypto.createHash 'sha1'
 		blockingsize = Math.min 33554432, req.files.file.size
