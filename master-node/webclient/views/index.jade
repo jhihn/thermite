@@ -3,23 +3,24 @@ extends layout
 block content
 
 	form(action="/runquery", method="POST")
+
+		button(type="submit") Execute
 		
 		h3 SQL Script:
-		div#queryEditor(style='min-height: 200px;')
+		div.editor#queryEditor(style='min-height: 200px;')
 			| SELECT AVG(Age) AS AverageAge, ZipCode FROM TestData GROUP BY ZipCode ORDER BY ZipCode
 
 		textarea(id='queryTextArea', name='query', style='display: none;')
 
 		h3 Parsed SQL
-		div#parsedEditor(style='min-height: 200px;')
+		div.editor#parsedEditor(style='min-height: 200px;')
 
 		h3 Script:
-		div#scriptEditor(style='min-height: 200px;')
+		div.editor#scriptEditor(style='min-height: 200px;')
 
 		textarea(id='scriptTextArea', name='script', style='display: none')
 
-		.queryButtons
-			button(type="submit") Execute
+		button(type="submit") Execute
 
 	script(src='scripts/ace-editor/ace.js')
 	script(src='scripts/underscore/underscore-min.js')
