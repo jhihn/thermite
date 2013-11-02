@@ -1,5 +1,5 @@
 
 module.exports =
 	index: (req, res) ->
-		res.render 'pipeline',
+		res.render 'pipeline/index',
 			title: 'Pipeline Editor'
