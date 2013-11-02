@@ -1,8 +1,8 @@
 http = require 'http'
 async = require 'async'
 _ = require 'underscore'
-core = require '../lib/core' #thermite core
-sqlparser = require '../lib/sqlparser'
+core = require '../core' #thermite core
+sqlparser = require '../sqlparser'
 
 module.exports =
 	index: (req, res) ->
