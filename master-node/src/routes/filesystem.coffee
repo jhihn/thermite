@@ -1,4 +1,4 @@
-db = require '../lib/database'
+db = require '../database'
 crypto = require 'crypto'
 fs = require 'fs'
   
