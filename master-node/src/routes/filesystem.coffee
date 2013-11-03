@@ -5,14 +5,18 @@ uuid = require 'node-uuid'
   
 module.exports =
 	
-	index: (req, res) ->
-		res.render 'filesystem',
-			title: 'Welcome'
-			files: [
-					{name:'a', size:1000}
-			        {name:'b', size:1000}
-			        {name:'c', size:1000}
-			]
+	index: (req, res, next) ->
+
+		db.FileTable.findAll()
+			.success (files) ->
+				# add a fake size property to the files
+				files.forEach (file) -> file.size = 123456
+
+				res.render 'filesystem',
+					title: 'Welcome'
+					files: files
+			.error (err) ->
+				next(err)
 			
 	upload: (req, res) ->
 		#TODO: get this as chunks come in to the server and not after file upload is complete.
