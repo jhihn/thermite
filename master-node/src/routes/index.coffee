@@ -1,6 +1,6 @@
 query = require './query'
 filesystem = require './filesystem'
-
+pipeline = require './pipeline'
 
 module.exports = (app) ->
 	app.get '/', query.index
