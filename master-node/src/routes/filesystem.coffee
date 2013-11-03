@@ -2,6 +2,7 @@ db = require '../database'
 crypto = require 'crypto'
 fs = require 'fs'
 uuid = require 'node-uuid'
+fileUpload = require '../fileUpload'
   
 module.exports =
 	
@@ -100,6 +101,22 @@ module.exports =
 					
 
 			res.redirect '/filesystem'
+
+
+
+
+
+	upload2: (req, res, next) ->
+		#todo: get the live upload stream instead of temp file stream and pass THAT to receiveFile
+		stream = fs.ReadStream req.files.file.path
+
+		fileUpload.receiveFile stream, (err, result) ->
+			if (err)
+				next(err) #let the web server report the error
+				return #do thing else in this function
+
+			res.redirect '/filesystem'
+
 ###
 {
   displayImage: {

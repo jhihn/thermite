@@ -7,6 +7,6 @@ module.exports = (app) ->
 	app.get '/filesystem', filesystem.index
 	app.post '/runQuery', query.runQuery
 	app.post '/parsestatement', query.parseStatement
-	app.post '/upload', filesystem.upload
+	app.post '/upload', filesystem.upload2
 
 	app.get '/pipeline', pipeline.index
