@@ -38,7 +38,7 @@ module.exports =
 			buffer += d
 			dataSize += d.length
 			offset += d.length
-			
+			console.log d.length
 			if not headerDone
 				x = buffer.indexOf('\n')
 				if (x > 0)
@@ -60,7 +60,7 @@ module.exports =
 						else
 							outColNames.push( c )
 					buffer = buffer.substr(x + 1)
-					dataSize = 0
+					dataSize -= x + 1
 					headerDone = true						
 
 			if dataSize > maxBlockSize
@@ -87,7 +87,7 @@ module.exports =
 			db.FileBlock.create
 				fileId: fileId
 				blockId: blockNum
-				start: offset - (dataSize + i)
+				start: offset - dataSize
 				end: offset 
 
 			db.FileTable.create
