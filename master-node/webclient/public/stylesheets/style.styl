@@ -2,43 +2,61 @@ baseFont = Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif
 accentFont = Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif
 bgColor = #272822
 
-corner-radial-gradient(innerColor, outerColor)
-	background-repeat
-	background: -moz-radial-gradient(0px 0px, circle farthest-corner,  innerColor 0%, outerColor 100%); /* FF3.6+ */
-	background: -webkit-radial-gradient(0px 0px, circle farthest-corner,  innerColor 0%,outerColor 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-radial-gradient(0px 0px, circle 200px,  innerColor 0%,outerColor 100%); /* Opera 12+ */
-	background: -ms-radial-gradient(0px 0px, circle farthest-corner,  innerColor 0%,outerColor 100%); /* IE10+ */
-	background: radial-gradient(circle farthest-corner at 0px 0px,  innerColor 0%,outerColor 100%); /* W3C */
+circle-gradient(radius, position, innerColor, outerColor)
+	background-repeat no-repeat
+	background: radial-gradient(circle radius at position,  innerColor 0%,outerColor 100%); /* W3C */
+
+ellipse-gradient(width, height, position, innerColor, outerColor)
+	background-repeat no-repeat
+	background: radial-gradient(ellipse width height at position,  innerColor 0%,outerColor 100%); /* W3C */
+
+border-color-inset(baseColor)
+	border-dark = darken(baseColor, 20%)
+	border-light = lighten(baseColor, 20%)
+	border-color border-dark border-light border-light border-dark
 
 html
 	height 100%
 body
 	height 100%
-	background-repeat no-repeat
 
 	padding: 50px
 	font: 14px baseFont
 	background-color bgColor
 	
-	corner-radial-gradient(lighten(bgColor, 10%), bgColor)
 	padding 0
 	margin 0
 
 	color: #ddd
 
 .header
-	background-color rgba(0, 0, 0, 0.2)
+	border-dark = darken(bgColor, 20%)
+	border-light = lighten(bgColor, 20%)
+	border-radius 7px
+	border-width 1px
+	border-style solid
+	border-color border-light border-dark border-dark border-light
+	background-color bgColor
+	ellipse-gradient(250%, 120%, 50% 30%, lighten(bgColor, 15%), bgColor)
+
+	h1, h2, h3
+		margin 0
+
+	padding: 0.2em
 
 .main
 	padding 1em;
-	
-	
+
+div.editor
+	border-style solid
+	border-width 1px
+	border-color-inset bgColor
+	border-radius 5px
 
 a
 	color: #00B7FF
 
 h1, h2, h3, h4
-	margin 0
 	font-family accentFont
 
 table.data

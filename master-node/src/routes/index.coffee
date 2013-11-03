@@ -8,3 +8,5 @@ module.exports = (app) ->
 	app.post '/runQuery', query.runQuery
 	app.post '/parsestatement', query.parseStatement
 	app.post '/upload', filesystem.upload
+
+	app.get '/pipeline', pipeline.index

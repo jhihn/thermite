@@ -1,0 +1,47 @@
+:coffeescript
+	do (Dataflow) ->
+	
+		# Dependencies
+		Base = Dataflow.prototype.node("base")
+		SqlStatement = Dataflow.prototype.node("Map")
+
+		SqlStatement.description = 'Map / Transform'
+		
+		SqlStatement.Model = Base.Model.extend {
+			defaults: () ->
+				defaults = Base.Model.prototype.defaults.call(this)
+				defaults.type = "Map"
+				defaults["input-type"] = "all"
+				defaults
+			,
+			initialize: (options) ->
+				if (this.get("label") == "")
+					this.set({label:"map"+this.id})
+				# super
+				Base.Model.prototype.initialize.call(this, options)
+			,
+			toJSON: () ->
+				json = Base.Model.prototype.toJSON.call(this)
+				json["input-type"] = this.get("input-type")
+				json
+			,
+			inputs:[
+				{
+					id: "rows",
+					type: "all"
+				},
+				{
+					id: "script",
+					type: "object"
+				},
+			],
+			outputs:[
+				{
+					id: "rows",
+					type: "all"
+				}
+			]
+		}
+
+		# SqlStatement.View = Base.View.extend({ })
+
