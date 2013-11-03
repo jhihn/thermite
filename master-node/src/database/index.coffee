@@ -20,13 +20,16 @@ module.exports =
 		ranOn: dbtypes.DATE
 
 	FileTable: db.define 'FileTable',
+		guid: dbtypes.STRING						   # random GUID
 		path: dbtypes.STRING                           # source file location (on master only)
 		name: dbtypes.STRING                           # table name
 		sha1: dbtypes.STRING                           # sha1 of file
+		type: dbtypes.STRING						   # mime type (from upload)
 		dupe: {type: dbtypes.INTEGER, defaultValue: 1} # -1 all nodes get the file, else n = n duplications
 		keys: dbtypes.STRING                           # key cols (if set)
 		schema: dbtypes.STRING                         # create table/index statements
 		group: dbtypes.STRING                          # group the file belongs to
+
 
 	#FileGroup:db.define 'FileTable',
 	#	sha1: dbtypes.STRING                           # file SHA1
@@ -35,7 +38,7 @@ module.exports =
 	FileBlock: db.define 'FileBlock',
 		blockRowId: {type: dbtypes.INTEGER, autoIncrement: true}  # blockId  per cluster
 		blockId: dbtypes.INTEGER  # blockId (0...n) per file
-		fileSha1: dbtypes.STRING  # join to FileTable
+		fileId: dbtypes.STRING    # join to FileTable.guid
 		blockSha1: dbtypes.STRING # sha1 for the raw block
 		start: dbtypes.INTEGER    # starting offset in file
 		end:   dbtypes.INTEGER    # ending offset in file

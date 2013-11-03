@@ -3,8 +3,19 @@ extends layout
 block content
  
 	form(action="/upload", method="POST", enctype="multipart/form-data")
-		input(type='text', id='keys' value='col1,col2...')
+		input(type='text', name='keys' value='') 
 		.queryButtons
-			input(type='file', id='file')
+			input(type='file', name='file')
 			input(type='submit', value='Upload')
 
+	table.data
+		thead
+			tr			
+				th name
+				th size
+		tbody				
+			each row in files
+				tr
+					td= row.name
+					td= row.size
+	

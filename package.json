@@ -14,15 +14,13 @@
     "sequelize": "~2.0.0-beta.0",
     "async": "~0.2.9",
     "underscore": "~1.5.2",
-<<<<<<< HEAD
-    "sql-parser": "~0.4.0"
+    "sql-parser": "~0.4.0",
+    "node-uuid": "~1.4.1",
+    "sql-parser": "~0.4.0",
+    "dataflow": "git+https://github.com/meemoo/dataflow.git"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-coffee": "~0.7.0"
-=======
-    "sql-parser": "~0.4.0",
-    "dataflow": "git+https://github.com/meemoo/dataflow.git"
->>>>>>> dj
   }
 }
