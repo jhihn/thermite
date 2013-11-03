@@ -16,7 +16,6 @@ module.exports =
 			
 	upload: (req, res) ->
 		#TODO: get this as chunks come in to the server and not after file upload is complete.
-		console.log JSON.stringify req.files
 		createStatement = 'CREATE TABLE ' + req.files.file.name + ' (' 
 		shasum = crypto.createHash 'sha1'
 		maxBlockSize = Math.min 33554432, req.files.file.size
@@ -50,6 +49,7 @@ module.exports =
 							','
 					cols = colLine.split(sep)					
 					for c in cols
+						c = c.trim()
 						if c[0] == '"' || c[0] == "'"
 							outColNames.push( c.substr(1, c.length-2) )
 							out
@@ -68,7 +68,7 @@ module.exports =
 						fileId: fileId
 						blockId: blockNum
 						start: offset - (dataSize + i)
-						end: offset - i					
+						end: offset - i				
 					blockNum += 1
 					
 			if 	headerDone
@@ -77,14 +77,14 @@ module.exports =
 		s.on 'end', () ->
 			colDefs = []
 			for i in [0..outColNames.length]
-				colDefs.push outColNames[i] +' TEXT'
+				colDefs.push outColNames[i] + ' TEXT'
 			createStatement += colDefs.join(', ') + ")"
 
 			db.FileBlock.create
 				fileId: fileId
 				blockId: blockNum
 				start: offset - (dataSize + i)
-				end: offset - i				
+				end: offset 
 
 			db.FileTable.create
 				guid: fileId
