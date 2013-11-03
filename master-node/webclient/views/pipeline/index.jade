@@ -1,0 +1,50 @@
+extends ../layout
+
+block scripts
+	<!-- Third-Party Libraries -->
+	<script src="/scripts/dataflow/libs/jquery.js"></script>
+	<script src="/scripts/dataflow/libs/jquery-ui.js"></script>
+	<script src="/scripts/dataflow/libs/jquery.ui.touch-punch.js"></script>
+	<script src="/scripts/dataflow/libs/underscore.js"></script>
+	<script src="/scripts/dataflow/libs/backbone.js"></script>
+	<script src="/scripts/dataflow/libs/hammer.min.js"></script>
+
+	<!-- Dataflow -->
+	<script src="/scripts/dataflow/build/dataflow.min.js"></script> 
+
+	<!-- Nodes (some basics to extend) -->
+	<script src="/scripts/dataflow/src/nodes/base.js"></script>
+	<script src="/scripts/dataflow/src/nodes/base-resizable.js"></script>
+	<script src="/scripts/dataflow/src/nodes/test.js"></script>
+	<!-- Nodes (subgraph functionality) -->
+	<script src="/scripts/dataflow/src/nodes/dataflow-input.js"></script>
+	<script src="/scripts/dataflow/src/nodes/dataflow-output.js"></script>
+	<script src="/scripts/dataflow/src/nodes/dataflow-subgraph.js"></script>
+
+	<!-- Style -->
+	<link rel="stylesheet" href="/scripts/dataflow/build/default/dataflow.min.css" />
+
+block content
+	include sqlStatement
+	include reduce
+	include map
+
+	:coffeescript
+		pipelineData = {
+			nodes: [
+				{id: 1, label:"SQL", type: 'SqlStatement', x:62, y:180, query: "SELECT * FROM TestData;"},
+				{id: 2, label:"Map: capitalize everything", type: 'Map', x:62, y:180},
+				{id: 3, label:"reduce: something...", type: 'Reduce', x:62, y:180}
+			],
+			edges: [
+				{source:{node:1, port:"rows"}, target:{node:2, port:"rows"}, route:0},
+				{source:{node:2, port:"rows"}, target:{node:3, port:"rows"}, route:1},
+			]
+		}
+
+		$ ->
+			dataflow = new window.Dataflow()
+
+			# Load test graph
+			g = dataflow.loadGraph(pipelineData)
+			g.trigger("change")

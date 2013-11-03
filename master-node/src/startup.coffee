@@ -24,6 +24,7 @@ app.use '/node2', dbnode.getMiddleware 'var/node2.db'
 app.use require('stylus').middleware(__dirname + '../webclient/public')
 app.use express.static path.join __dirname, '../webclient/public'
 app.use '/scripts/underscore', express.static path.join __dirname, '../../node_modules/underscore'
+app.use '/scripts/dataflow', express.static path.join __dirname, '../../node_modules/dataflow'
 
 #development only
 if 'development' == app.get('env')

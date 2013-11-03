@@ -15,7 +15,9 @@
     "async": "~0.2.9",
     "underscore": "~1.5.2",
     "sql-parser": "~0.4.0",
-    "node-uuid": "~1.4.1"
+    "node-uuid": "~1.4.1",
+    "sql-parser": "~0.4.0",
+    "dataflow": "git+https://github.com/meemoo/dataflow.git"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
