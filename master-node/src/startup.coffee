@@ -4,6 +4,8 @@ http = require 'http'
 path = require 'path'
 db = require './database'
 
+require './background'
+
 app = new express
 
 #all environments
