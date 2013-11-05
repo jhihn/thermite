@@ -15,12 +15,12 @@ block content
 				th Actions
 		tbody				
 			each file in files
-				pre= JSON.stringify files
+				pre= JSON.stringify (files)
 
 				tr
-					td= file.name
+					td(class=file.status)= file.name
 					td= file.size
-					td(class=file.status)
+					td
 						form(action="/fix", method="POST")
 							input(type='hidden', value= file.guid name='file[guid]')
 							input(type='submit', value='Fix')
