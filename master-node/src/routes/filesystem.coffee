@@ -3,28 +3,42 @@ crypto = require 'crypto'
 fs = require 'fs'
 uuid = require 'node-uuid'
 _ =  require 'underscore'
+async = require 'async'
   
 module.exports =
 	
 	index: (req, res, next) ->
 		db.con.query("SELECT guid, name, end as size, MAX(blockId) FROM Files F JOIN FileBlocks FB ON F.guid=FB.fileId ORDER BY name")
 			.success (files) -> 
-				for file in files
-					db.con.query("SELECT F.guid as guid, F.dupe as dupe, FB.blockId as blockId, onNodes FROM Files F JOIN FileBlocks FB ON F.guid=FB.fileId LEFT JOIN (SELECT fileId, blockId, COUNT(nodeId) as onNodes FROM FileBlockAllocations ) where onNodes < dupe AND guid='" + file.guid + "'")
-						.success (blocks) -> 
-							status = 'atdupefactor'
-							for block in blocks
-								if block.dupe > block.onNodes and status == 'atdupefactor'
-									status = 'belowdupefactor'
-								if block.dupe == 0
-									status = 'incomplete'
-							file.status = status
-						.error (err) ->
-							next(err)							
-				#sync this		
-				res.render 'filesystem',
-					title: 'Welcome'
-					files: files
+
+				#make a list of funtions. They will be "aggretated" by the sync library.
+				commandFunctionList = for file in files
+					(done) -> #call done(error) or done(null, result)
+						db.con.query("SELECT F.guid as guid, F.dupe as dupe, FB.blockId as blockId, onNodes FROM Files F JOIN FileBlocks FB ON F.guid=FB.fileId LEFT JOIN (SELECT fileId, blockId, COUNT(nodeId) as onNodes FROM FileBlockAllocations ) where onNodes < dupe AND guid='" + file.guid + "'")
+							.success (blocks) -> 
+								status = 'atdupefactor'
+								for block in blocks
+									if block.dupe > block.onNodes and status == 'atdupefactor'
+										status = 'belowdupefactor'
+									if block.dupe == 0
+										status = 'incomplete'
+								file.status = status
+
+								done(null, file) #success!
+
+							.error (err) ->
+								done(err) #FUCK!
+
+				async.series commandFunctionList, (err, files) ->
+					if err
+						next(err)
+						return #don't keep going!
+
+					#sync this		
+					res.render 'filesystem',
+						title: 'Welcome'
+						files: files
+						
 			.error (err) ->
 				next(err)
 			
