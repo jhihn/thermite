@@ -2,19 +2,30 @@ db = require '../database'
 crypto = require 'crypto'
 fs = require 'fs'
 uuid = require 'node-uuid'
+_ =  require 'underscore'
   
 module.exports =
 	
 	index: (req, res, next) ->
-
-		db.FileTable.findAll()
-			.success (files) ->
-				# add a fake size property to the files
-				files.forEach (file) -> file.size = 123456
-
+		db.con.query("SELECT guid, name, end as size, MAX(blockId) FROM Files F JOIN FileBlocks FB ON F.guid=FB.fileId ORDER BY name")
+			.success(files) -> 
+				for file in files
+					db.con.query("SELECT F.guid as guid, F.dupe as dupe, FB.blockId as blockId, onNodes FROM Files F JOIN FileBlocks FB ON F.guid=FB.fileId LEFT JOIN (SELECT fileId, blockId, COUNT(nodeId) as onNodes FROM FileBlockAllocations ) where onNodes < dupe AND guid='" + file.guid + "'")
+						.success(blocks) -> 
+							console.log blocks
+							color = '#008800'
+							for block in blocks
+								if block.dupe > block.onNodes and color == '#008800'
+									color = '#888800'
+								if block.dupe == 0
+									color = '#880000'
+							file.color = color
+						.error (err) ->
+							next(err)							
+				#sync this		
 				res.render 'filesystem',
 					title: 'Welcome'
-					files: files
+				files: files
 			.error (err) ->
 				next(err)
 			
@@ -64,9 +75,8 @@ module.exports =
 					headerDone = true						
 
 			if dataSize > maxBlockSize
-				i = buffer.rindex '\n'
+				i = buffer.lastIndexOf '\n'
 				if i > -1				
-					blocks.push offset - (buffer.length - i)
 					dataSize = i + 1
 					db.FileBlock.create
 						fileId: fileId
@@ -90,7 +100,7 @@ module.exports =
 				start: offset - dataSize
 				end: offset 
 
-			db.FileTable.create
+			db.File.create
 				guid: fileId
 				path: req.files.file.path
 				name: req.files.file.name
@@ -100,6 +110,51 @@ module.exports =
 					
 
 			res.redirect '/filesystem'
+			
+	fix: (req, res) ->
+		#1 identify nodes needing blocks
+		#2 send blocks to nodes
+		fileMatch = ''
+		if req.body.file.guid
+			fileMatch = "F.guid = '" + req.body.file.guid + "'"
+		db.con.query("SELECT F.guid as fileId, F.dupe, FB.blockId as blockId, onNodes FROM Files F JOIN FileBlocks FB ON F.guid=FB.fileId LEFT JOIN " +
+		             "(SELECT fileId, blockId, COUNT(nodeId) as onNodes FROM FileBlockAllocations ) where oNodes < F.dupe " + fileMatch)
+			.success(blocks) ->
+				db.con.query "SELECT nodeId FROM DatabaseNodes"
+					 .success(allNodes) ->
+						for block in blocks
+							db.con.query "SELECT nodeId from FileBlockAllocations WHERE fileId='"+ blocks.fileId+ "' and blockId='" + block.blockId + "'"
+								.success(usedNodes) ->
+									eligibleNodes = _.without allNodes,usedNodes
+									if eligibleNodes.length > 0
+										nodeIndex = _.random 0, eligibleNodes.length - 1
+										sendFileBlockCommand eligibleNodes[nodeIndex], block.fileId, block.blockId
+		
+		res.redirect '/filesystem'
+		
+	sendFileInfo: (req, res) ->
+		db.File.find({where: {'guid': req.fileId}}, File) 
+			.sucess(files) ->
+				if file.length == 1 
+					file = files[0]
+					file.blocks = []
+					db.find({where: {'guid': rew.fileId}}, FileBlock) 
+						.success(blocks) ->
+							for block in blocks
+								file.blocks.push block
+								
+							res.send JSON.stringify file
+			
+	sendFileBlock: (req, res) ->
+		db.FileBlock.find({where: {fileId: req.fileId, blockId: req.blockId}})
+			.success(fileBlock) ->
+				s = fs.createReadStream fileBlock.path, {start: fileBlock.start, end: fileBlock.end}
+				s.on("data", data) ->
+					req.write(data)
+				s.read fileBlock.end - fileBlock.start
+				s.end()
+				
+				
 ###
 {
   displayImage: {

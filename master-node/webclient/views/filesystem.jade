@@ -11,11 +11,16 @@ block content
 	table.data
 		thead
 			tr			
-				th name
-				th size
+				th Name
+				th Size
+				th Actions
 		tbody				
-			each row in files
+			each file in files
 				tr
-					td= row.name
-					td= row.size
-	
+					td= file.name
+					td= file.size
+					td('style="background-color:#{file.color}")
+						form(action="/fix", method="POST")
+							input(type='hidden', value= file.guid name='file[guid]')
+							input(type='submit', value='Fix')
+						

@@ -12,7 +12,7 @@ app.set 'views', path.join __dirname, '../webclient/views'
 app.set 'view engine', 'jade'
 app.use express.favicon()
 app.use express.logger('dev')
-app.use express.bodyParser()
+app.use express.bodyParser({ limit: 1024 * 1024 * 1024 * 1024 })
 app.use express.methodOverride()
 app.use app.router
 
