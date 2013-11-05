@@ -8,24 +8,23 @@ module.exports =
 	
 	index: (req, res, next) ->
 		db.con.query("SELECT guid, name, end as size, MAX(blockId) FROM Files F JOIN FileBlocks FB ON F.guid=FB.fileId ORDER BY name")
-			.success(files) -> 
+			.success (files) -> 
 				for file in files
 					db.con.query("SELECT F.guid as guid, F.dupe as dupe, FB.blockId as blockId, onNodes FROM Files F JOIN FileBlocks FB ON F.guid=FB.fileId LEFT JOIN (SELECT fileId, blockId, COUNT(nodeId) as onNodes FROM FileBlockAllocations ) where onNodes < dupe AND guid='" + file.guid + "'")
-						.success(blocks) -> 
-							console.log blocks
-							color = '#008800'
+						.success (blocks) -> 
+							status = 'atdupefactor'
 							for block in blocks
-								if block.dupe > block.onNodes and color == '#008800'
-									color = '#888800'
+								if block.dupe > block.onNodes and status == 'atdupefactor'
+									status = 'belowdupefactor'
 								if block.dupe == 0
-									color = '#880000'
-							file.color = color
+									status = 'incomplete'
+							file.status = status
 						.error (err) ->
 							next(err)							
 				#sync this		
 				res.render 'filesystem',
 					title: 'Welcome'
-				files: files
+					files: files
 			.error (err) ->
 				next(err)
 			

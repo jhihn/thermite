@@ -7,7 +7,6 @@ block content
 		.queryButtons
 			input(type='file', name='file')
 			input(type='submit', value='Upload')
-
 	table.data
 		thead
 			tr			
@@ -16,10 +15,12 @@ block content
 				th Actions
 		tbody				
 			each file in files
+				pre= JSON.stringify files
+
 				tr
 					td= file.name
 					td= file.size
-					td('style="background-color:#{file.color}")
+					td(class=file.status)
 						form(action="/fix", method="POST")
 							input(type='hidden', value= file.guid name='file[guid]')
 							input(type='submit', value='Fix')

@@ -65,3 +65,21 @@ table.data thead {
   background-color: #1f201b;
   color: #e6db74;
 }
+td.incomplete {
+  background-color: #800;
+}
+td.belowdupefactor {
+  background-color: #880;
+}
+td.atdupefactor {
+  background-color: #080;
+}
+table.files tbody td .incomplete {
+  background-color: #800;
+}
+table.files tbody td .belowdupefactor {
+  background-color: #880;
+}
+table.files tbody td .atdupefactor {
+  background-color: #080;
+}
