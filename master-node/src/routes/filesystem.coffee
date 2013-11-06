@@ -148,14 +148,14 @@ module.exports =
 	sendFileInfo: (req, res) ->
 		db.File.find({where: {guid: req.query.fileId}}) 
 			.success (file) ->
+				file = file.toJSON()
 				file.blocks = []
+				console.log file
 				db.FileBlock.findAll({where: {'fileId': req.query.fileId}, order: 'blockId'}) 
 					.success (blocks) ->
 						for block in blocks
-							d = { 'blockId': block.id, 'start': block.start, 'end': block.end}
-							file.blocks.push d							
-							console.log d
-
+							file.blocks.push block.toJSON()							
+							console.log block.toJSON
 						res.send JSON.stringify file
 			
 	sendFileBlock: (req, res) ->
