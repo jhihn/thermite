@@ -18,14 +18,13 @@ module.exports =
 								for block in blocks
 									if block.dupe > block.onNodes and status == 'atdupefactor'
 										status = 'belowdupefactor'
-									if block.dupe == 0
+									if block.onNodes == 0
 										status = 'incomplete'
 								file.status = status
 								
-								done(null,files)
+								done(null,file)
 							
 							.error (err) ->
-								next(err)
 								done(err)																			
 
 							
@@ -147,27 +146,27 @@ module.exports =
 		res.redirect '/filesystem'
 		
 	sendFileInfo: (req, res) ->
-		db.File.find({where: {'guid': req.fileId}}, File) 
-			.sucess(files) ->
-				if file.length == 1 
-					file = files[0]
-					file.blocks = []
-					db.find({where: {'guid': rew.fileId}}, FileBlock) 
-						.success(blocks) ->
-							for block in blocks
-								file.blocks.push block
-								
-							res.send JSON.stringify file
+		db.File.find({where: {guid: req.query.fileId}}) 
+			.success (file) ->
+				file.blocks = []
+				db.FileBlock.findAll({where: {'fileId': req.query.fileId}, order: 'blockId'}) 
+					.success (blocks) ->
+						for block in blocks
+							d = { 'blockId': block.id, 'start': block.start, 'end': block.end}
+							file.blocks.push d							
+							console.log d
+
+						res.send JSON.stringify file
 			
 	sendFileBlock: (req, res) ->
-		db.FileBlock.find({where: {fileId: req.fileId, blockId: req.blockId}})
-			.success(fileBlock) ->
-				s = fs.createReadStream fileBlock.path, {start: fileBlock.start, end: fileBlock.end}
-				s.on("data", data) ->
-					req.write(data)
-				s.read fileBlock.end - fileBlock.start
-				s.end()
-				
+		db.File.find({where: {guid: req.query.fileId}})
+			.success (file) ->
+				db.FileBlock.find({where: {fileId: req.query.fileId, blockId: req.query.blockId}})
+					.success (fileBlock) ->
+						s = fs.createReadStream file.path, {start: fileBlock.start, end: fileBlock.end}
+						s.pipe res						
+						res.end
+					
 				
 ###
 {
