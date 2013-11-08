@@ -32,7 +32,24 @@ for nodeId in [0..4]
 			
 	console.log "Attempting to start local node: node" + nodeId
 	p = cp.spawn 'node', ['dbnode.js', 3001 + nodeId, '/var/node' + nodeId ]
+	p.nodeId = nodeId
+	p.outBuff = ''
+	p.errBuff = ''
+	p.stdout.on 'data', (data)->
+		outBuff += data
+		lio = outBuff.lastIndexOf("\n")
+		if lio >=0
+			console.log '' + nodeId + ':out:' + outBuff.substr(0,lio)
+			outBuff = outBuff.substr(lio+1)
+	p.stderr.on 'data', (data)->
+		errBuff += data
+		lio = errBuff.lastIndexOf("\n")
+		if lio >=0
+			console.log '' + nodeId + ':err:' + errBuff.substr(0,lio)
+			errBuff = errBuff.substr(lio+1)
+
 	nodeProcesses.push p
+
 
 
 
