@@ -177,7 +177,11 @@ module.exports =
 					.error (err) ->
 						next(err)							
 			.error (err) ->
-				next(err)							
+				next(err)	
+	registerFileBlock: (req, res) ->
+		db.con.query "INSERT OR REPLACE INTO FileBlockAllocations (fileId, blockId, nodeId, minKeys, maxKeys) VALUES " +
+			"("+ req.query.fileId + "', '" + req.query.blockId + "', '" + req.query.nodeId + "', '" + req.query.minKeys + "', '" + req.query.maxKeys + ")" 
+			
 					
 				
 ###

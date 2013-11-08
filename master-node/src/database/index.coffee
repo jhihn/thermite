@@ -10,6 +10,7 @@ module.exports =
 		path: dbtypes.STRING
 		guid: dbtypes.STRING   
 		beat: dbtypes.INTEGER  # last heartbeat time_t
+		nodeGroups: dbtypes.STRING
 
 	#DatabaseNodeGroup: db.define 'DatabaseNodeGroup',
 	#	name: dbtypes.STRING # name of group (ie. 'secret', 'open', 'jeff') for file block allocation
@@ -29,7 +30,7 @@ module.exports =
 		dupe: {type: dbtypes.INTEGER, defaultValue: 1} # -1 all nodes get the file, else n = n duplications
 		keys: dbtypes.STRING                           # key cols (if set)
 		schema: dbtypes.STRING                         # create table/index statements
-		group: dbtypes.STRING                          # group the file belongs to
+		nodeGroups: dbtypes.STRING                          # group the file belongs to
 		sep : dbtypes.STRING						   #field seperatoe (tab or , )
 
 
@@ -38,12 +39,12 @@ module.exports =
 	#	group: dbtypes.STRING                          # group the file belongs to (more than 1 row means more than 1 group)
 
 	FileBlock: db.define 'FileBlock',
-		blockRowId: {type: dbtypes.INTEGER, autoIncrement: true}  # blockId  per cluster
 		blockId: dbtypes.INTEGER  # blockId (0...n) per file
 		fileId: dbtypes.STRING    # join to File.guid
 		blockSha1: dbtypes.STRING # sha1 for the raw block
 		start: dbtypes.INTEGER    # starting offset in file
 		end:   dbtypes.INTEGER    # ending offset in file
+		has: dbtypes.INTEGER      # whether or not this node has this block, master should always have all
 
 	FileBlockAllocation: db.define 'FileBlockAllocation',
 		fileId: dbtypes.INTEGER   # join to File.guid
