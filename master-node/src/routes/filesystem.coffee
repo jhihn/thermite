@@ -47,10 +47,12 @@ module.exports =
 		createStatement = 'CREATE TABLE ' + req.files.file.name + ' (' 
 		shasum = crypto.createHash 'sha1'
 		maxBlockSize = Math.min 33554432, req.files.file.size
-		dataSize = 0
+		startOffset = 0
+		endOffset = 0
 		offset = 0
+		dataSize = 0
 		headerDone = false
-		sampleDone = false
+		lastNewLine = 0
 		outColNames = []
 		fileId = uuid.v4()
 		blockNum = 0
@@ -60,17 +62,15 @@ module.exports =
 		s.on 'data', (d) ->
 			shasum.update d
 			buffer += d
-			dataSize += d.length
 			offset += d.length
-			console.log d.length
-			if not headerDone
-				x = buffer.indexOf('\n')
-				if (x > 0)
-				
-					blockStart = x + 1
-					colLine = buffer.substr(0, x + 1)
+			
+			if not headerDone 
+				lastNewLine = buffer.indexOf('\n')
+				if lastNewLine > 0				
+					diff = buffer.length - lastNewLine
+					colLine = buffer.substr(0, lastNewLine + 1)
 					tab = colLine.indexOf('\t')
-					comma = colLine.indexOf('\t')
+					comma = colLine.indexOf(',')
 					sep = if tab > comma 
 							'\t' 
 						else 
@@ -80,26 +80,28 @@ module.exports =
 						c = c.trim()
 						if c[0] == '"' || c[0] == "'"
 							outColNames.push( c.substr(1, c.length-2) )
-							out
 						else
 							outColNames.push( c )
-					buffer = buffer.substr(x + 1)
-					dataSize -= x + 1
+					startOffset =  (offset - diff) + 1
+					buffer = buffer.substr(startOffset)
+					dataSize = buffer.length
 					headerDone = true						
-
+					
+			dataSize += d.length
 			if dataSize > maxBlockSize
-				i = buffer.lastIndexOf '\n'
-				if i > -1				
-					dataSize = i + 1
+				lastNewLine =buffer.lastIndexOf('\n')
+				if lastNewLine > 0	
+					diff = buffer.length - lastNewLine
+					endOffset =  offset - diff
 					db.FileBlock.create
 						fileId: fileId
 						blockId: blockNum
-						start: offset - (dataSize + i)
-						end: offset - i				
+						start: startOffset
+						end: endOffset
 					blockNum += 1
-					
-			if 	headerDone
-				buffer = ''
+					buffer = buffer.substr(lastNewLine + 1)
+					dataSize = buffer.length
+					startOffset = endOffset + 1
 
 		s.on 'end', () ->
 			colDefs = []
@@ -107,11 +109,12 @@ module.exports =
 				colDefs.push outColNames[i] + ' TEXT'
 			createStatement += colDefs.join(', ') + ")"
 
-			db.FileBlock.create
-				fileId: fileId
-				blockId: blockNum
-				start: offset - dataSize
-				end: offset 
+			if dataSize
+				db.FileBlock.create
+					fileId: fileId
+					blockId: blockNum
+					start: startOffset
+					end: offset
 
 			db.File.create
 				guid: fileId
@@ -152,19 +155,29 @@ module.exports =
 				file.blocks = []
 				db.FileBlock.findAll({where: {'fileId': req.query.fileId}, order: 'blockId'}) 
 					.success (blocks) ->
-						for block in blocks
-							block = { blockId: block.blockId, start: block.start, end: block.end, fileId: block.fileId, blockSha1: block.blockSha1 }
-							file.blocks.push block						
-						res.send JSON.stringify file
+						if blocks
+							for block in blocks
+								block = { blockId: block.blockId, start: block.start, end: block.end, fileId: block.fileId, blockSha1: block.blockSha1 }
+								file.blocks.push block						
+							res.send JSON.stringify file
+					.error (err) ->
+						next(err)								
+			.error (err) ->
+				next(err)							
 			
 	sendFileBlock: (req, res) ->
 		db.File.find({where: {guid: req.query.fileId}})
 			.success (file) ->
 				db.FileBlock.find({where: {fileId: req.query.fileId, blockId: req.query.blockId}})
 					.success (fileBlock) ->
-						s = fs.createReadStream file.path, {start: fileBlock.start, end: fileBlock.end}
-						s.pipe res						
-						res.end
+						if fileBlock
+							s = fs.createReadStream file.path, {start: fileBlock.start, end: fileBlock.end}
+							s.pipe res						
+							res.end
+					.error (err) ->
+						next(err)							
+			.error (err) ->
+				next(err)							
 					
 				
 ###
