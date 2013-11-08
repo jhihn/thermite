@@ -26,9 +26,9 @@ app.use app.router
 
 nodeProcesses = []
 for nodeId in [0..4] 
-	fs.existsSync '/var/thermite/node' + nodeId, (exists) ->
+	fs.existsSync 'var/node' + nodeId, (exists) ->
 		if not exists
-			fs.mkdir '/var/thermite/node' + nodeId, () ->
+			fs.mkdir 'var/node' + nodeId, () ->
 			
 	console.log "Attempting to start local node: node" + nodeId
 	p = cp.spawn 'node', ['dbnode.js', 3001 + nodeId, '/var/node' + nodeId ]

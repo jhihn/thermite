@@ -22,7 +22,7 @@ getMiddleware = (path, port) ->
 
 		db.all req.body.query, (err, rows) ->
 			if err
-				console.log 'Error: ' +  err
+				console.log 'Error2: ' +  err
 
 				res.json
 					error: err
