@@ -47,7 +47,7 @@ module.exports = (db) ->
 	# fire off the commands, one at a time
 	async.series allCommands, (err, results) ->
 		if err
-			console.log 'Error: ' + err
+			console.log 'Error creating sample data: ' + err
 			return
 
 		console.log 'Test data created.'

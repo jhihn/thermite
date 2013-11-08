@@ -25,14 +25,14 @@ app.use app.router
 #app.use '/node2', dbnode.getMiddleware 'var/node2.db'
 
 nodeProcesses = []
-for nodeId in [0..4]
-	fs.exists '/var/node' + nodeId, (exists) ->
+for nodeId in [0..4] 
+	fs.existsSync '/var/thermite/node' + nodeId, (exists) ->
 		if not exists
 			fs.mkdir '/var/thermite/node' + nodeId, () ->
 			
-		console.log "Attempting to start local node: node" + nodeId
-		p = cp.spawn 'node', ['dbnode.js', 3001 + nodeId, '/var/node' + nodeId ]
-		nodeProcesses.push p
+	console.log "Attempting to start local node: node" + nodeId
+	p = cp.spawn 'node', ['dbnode.js', 3001 + nodeId, '/var/node' + nodeId ]
+	nodeProcesses.push p
 
 
 

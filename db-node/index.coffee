@@ -6,9 +6,9 @@ fs = require 'fs'
 child = require 'child_process'
 
 #use the supplied app host instead of creating your own
-getMiddleware = (path) ->
+getMiddleware = (path, port) ->
 
-	database.setup(path, app.get('port'), true)
+	database.setup(path, port, true)
 	db = database.database
 
 	app = new express
@@ -87,7 +87,7 @@ getMiddleware = (path) ->
 					p.on 'exit', () ->
 						minKeys = [] #we don't use these yet
 						maxKeys = []
-						db.run "INSERT OR REPLACE INTO FileBlocks (blockSha1, has) ('?', 1)", [blockSha1]
+						db.run "INSERT OR REPLACE INTO FileBlocks (blockSha1, has) (?, 1)", [blockSha1]
 						fs.remove fileName
 						reportOpts = host: req.query.host
 							port: req.query.port
@@ -105,14 +105,14 @@ startServer = (port, path) ->
 	app.use express.logger('dev')
 	app.use express.bodyParser()
 
-	app.use getMiddleware path
+	app.use getMiddleware path, port
 
 	#development only
 	if 'development' == app.get('env')
 		app.use(express.errorHandler());
 
-	http.createServer(app).listen app.get('port'), () ->
-		console.log('Express server (thermite node) listening on port ' + app.get('port'))
+	http.createServer(app).listen port, () ->
+		console.log('Express server (thermite node) listening on port ' + port)
 
 module.exports.getMiddleware = getMiddleware
 module.exports.start = startServer
