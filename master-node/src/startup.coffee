@@ -36,17 +36,26 @@ for nodeId in [0..4]
 	p.outBuff = ''
 	p.errBuff = ''
 	p.stdout.on 'data', (data)->
-		outBuff += data
-		lio = outBuff.lastIndexOf("\n")
+		p.outBuff += data
+		lio = p.outBuff.lastIndexOf("\n")
 		if lio >=0
-			console.log '' + nodeId + ':out:' + outBuff.substr(0,lio)
-			outBuff = outBuff.substr(lio+1)
+			console.log '' + nodeId + ':out:' + p.outBuff.substr(0,lio)
+			p.outBuff = p.outBuff.substr(lio+1)
+			
+	p.stdout.on 'close', (code) ->
+		if p.errBuff.trim().length
+			console.log '' + nodeId + ':out:' + p.outBuff
+		
 	p.stderr.on 'data', (data)->
-		errBuff += data
-		lio = errBuff.lastIndexOf("\n")
+		lio = p.errBuff.lastIndexOf("\n")
 		if lio >=0
-			console.log '' + nodeId + ':err:' + errBuff.substr(0,lio)
-			errBuff = errBuff.substr(lio+1)
+			console.log '' + nodeId + ':err:' + p.errBuff.substr(0,lio)
+			p.errBuff = p.errBuff.substr(lio+1)
+			
+	p.stderr.on 'close', (code) ->
+		if p.errBuff.trim().length
+			console.log '' + nodeId + ':err:' + p.errBuff
+		console.log '' + p.nodeId + ' exited'
 
 	nodeProcesses.push p
 
