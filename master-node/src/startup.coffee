@@ -6,6 +6,8 @@ db = require './database'
 cp =  require 'child_process'
 fs = require 'fs'
 
+require './background'
+
 app = new express
 
 #all environments
